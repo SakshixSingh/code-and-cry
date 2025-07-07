@@ -1,24 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import Landing from './components/Landing';
+import Feed from './pages/Feed';
+import PostRant from './pages/PostRant';
+import Profile from './pages/Profile';
+import AppNavbar from './components/Navbar';
+import EditRant from './pages/EditRant';
+
+function AppWrapper() {
+  const location = useLocation();
+  const showNavbar = location.pathname !== "/";
+
+  return (
+    <>
+      {showNavbar && <AppNavbar />}
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/feed" element={<Feed />} />
+        <Route path="/post" element={<PostRant />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/edit/:id" element={<EditRant />} />
+      </Routes>
+    </>
+  );
+}
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <AppWrapper />
+    </Router>
   );
 }
 
