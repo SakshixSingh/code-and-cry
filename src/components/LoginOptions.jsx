@@ -11,6 +11,7 @@ import {
   setDoc
 } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
+import "../styles/Login.css"; // Link your custom styles
 
 const LoginOptions = () => {
   const navigate = useNavigate();
@@ -21,7 +22,6 @@ const LoginOptions = () => {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      // Check if user doc already exists
       const userRef = doc(db, "users", user.uid);
       const userSnap = await getDoc(userRef);
 
@@ -46,7 +46,6 @@ const LoginOptions = () => {
       const result = await signInAnonymously(auth);
       const user = result.user;
 
-      // Create anonymous profile with random avatar
       const avatarUrl = `https://api.dicebear.com/7.x/bottts/svg?seed=anon-${user.uid}`;
       await setDoc(doc(db, "users", user.uid), {
         username: "Anonymous Dev",
@@ -62,14 +61,15 @@ const LoginOptions = () => {
   };
 
   return (
-    <div className="d-flex flex-column gap-2 align-items-center mt-5">
-      <h3 className="mb-4">Welcome to Code & Cry 🫠</h3>
-      <button className="btn btn-primary w-75" onClick={loginWithGoogle}>
-        Sign in with Google
-      </button>
-      <button className="btn btn-secondary w-75" onClick={loginAnonymously}>
-        Continue Anonymously
-      </button>
+    <div className="login-wrapper">
+      <div className="login-card">
+        <button className="login-btn btn btn-primary" onClick={loginWithGoogle}>
+          Sign in with Google
+        </button>
+        <button className="login-btn btn btn-outline-light" onClick={loginAnonymously}>
+          Continue Anonymously
+        </button>
+      </div>
     </div>
   );
 };

@@ -1,11 +1,11 @@
 import React from 'react';
 import LoginOptions from './LoginOptions';
+import '../styles/Landing.css'; // Import custom styles
 
 const Landing = () => {
   return (
-    <div className="container d-flex flex-column align-items-center justify-content-center vh-100">
-      <h1 className="text-center mb-4">💻 Code & Cry 😭</h1>
-      <p className="text-center mb-4">Where code breaks and so do we.</p>
+    <div className="landing-page">
+      <h1 className="landing-title"> Welcome to Code & Cry 💻 😭</h1>
       <LoginOptions />
     </div>
   );

@@ -1,0 +1,34 @@
+/* Full night sky background */
+.landing-page {
+  height: 100vh;
+  width: 100%;
+  background: linear-gradient(to bottom, #0d1b2a, #1b263b, #415a77);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+  animation: fadeIn 2s ease;
+  overflow: hidden;
+}
+
+/* Animated title */
+.landing-title {
+  font-size: 3rem;
+  font-weight: 700;
+  animation: floatText 3s ease-in-out infinite alternate;
+  margin-bottom: 2rem;
+}
+
+/* Floating text effect */
+@keyframes floatText {
+  0% {
+    transform: translateY(0px);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(10px);
+    opacity: 1;
+  }
+}

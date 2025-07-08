@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { db, auth } from "../firebase/firebase";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import "../styles/Post.css";  // or wherever you put the CSS
+
 
 const PostRant = () => {
   const [text, setText] = useState("");
@@ -37,7 +39,8 @@ const PostRant = () => {
   };
 
   return (
-    <div className="container mt-5">
+    
+    <div className="container mt-5 post-form">
       <h2 className="mb-4">📝 Drop Your Rant</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">

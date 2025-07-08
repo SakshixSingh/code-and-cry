@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { db, auth } from "../firebase/firebase";
+import "../styles/Feed.css"; // ✅ Add your custom CSS file here
+
 import {
   collection,
   onSnapshot,
@@ -7,17 +9,23 @@ import {
   query,
   doc,
   updateDoc,
-  increment
+  increment,
+  where,
 } from "firebase/firestore";
-import { Card, Badge } from "react-bootstrap";
+import { Card, Badge, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 const Feed = () => {
   const [rants, setRants] = useState([]);
+  const [moodFilter, setMoodFilter] = useState(""); // "" means show all
   const navigate = useNavigate();
 
   useEffect(() => {
-    const q = query(collection(db, "rants"), orderBy("createdAt", "desc"));
+    const baseQuery = collection(db, "rants");
+
+    const q = moodFilter
+      ? query(baseQuery, where("mood", "==", moodFilter), orderBy("createdAt", "desc"))
+      : query(baseQuery, orderBy("createdAt", "desc"));
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const posts = snapshot.docs.map((doc) => ({
@@ -28,7 +36,7 @@ const Feed = () => {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [moodFilter]);
 
   const addReaction = async (rantId, type) => {
     const rantRef = doc(db, "rants", rantId);
@@ -42,53 +50,65 @@ const Feed = () => {
   };
 
   return (
-    <div className="container mt-5">
-      <h2 className="mb-4 text-center">🔥 Code & Cry Feed</h2>
+    <div className="feed-container container mt-5">
+      <h2 className="feed-title mb-4 text-center">🔥 DevRant</h2>
+
+      {/* Mood Filter UI */}
+      <div className="mood-filter d-flex justify-content-center gap-2 mb-4 flex-wrap">
+        {["", "💀", "🥲", "😡", "😵‍💫"].map((mood, idx) => (
+          <Button
+            key={idx}
+            variant={moodFilter === mood ? "dark" : "outline-dark"}
+            onClick={() => setMoodFilter(mood)}
+            className="mood-button"
+          >
+            {mood || "All"}
+          </Button>
+        ))}
+      </div>
 
       {rants.map((rant) => (
-        <Card key={rant.id} className="mb-3 shadow p-3 d-flex flex-row align-items-start gap-3">
-          {/* 🔥 Avatar */}
+        <Card
+          key={rant.id}
+          className="rant-card mb-3 shadow p-3 d-flex flex-row align-items-start gap-3"
+        >
+          {/* Avatar */}
           <img
             src={rant.avatar || "https://api.dicebear.com/7.x/bottts/svg?seed=default"}
             alt="avatar"
-            style={{
-              width: "60px",
-              height: "60px",
-              borderRadius: "50%",
-              objectFit: "cover",
-            }}
+            className="rant-avatar"
           />
 
           <div>
-            <Card.Title>
+            <Card.Title className="rant-title">
               {rant.isAnonymous ? rant.username : `${rant.username} ${rant.mood}`}
             </Card.Title>
 
-            <Card.Text>{rant.text}</Card.Text>
+            <Card.Text className="rant-text">{rant.text}</Card.Text>
 
             {rant.code && (
-              <pre className="bg-dark text-light p-2 rounded">
+              <pre className="rant-code bg-dark text-light p-2 rounded">
                 <code>{rant.code}</code>
               </pre>
             )}
 
-            <Badge bg="secondary">#{rant.tag}</Badge>
+            <Badge bg="secondary" className="rant-tag">#{rant.tag}</Badge>
 
-            <div className="mt-3 d-flex gap-3">
-              <span onClick={() => addReaction(rant.id, "fire")} style={{ cursor: "pointer" }}>
+            <div className="mt-3 d-flex gap-3 rant-reactions">
+              <span onClick={() => addReaction(rant.id, "fire")} className="reaction-btn">
                 🔥 {rant.reactions?.fire || 0}
               </span>
-              <span onClick={() => addReaction(rant.id, "heartbreak")} style={{ cursor: "pointer" }}>
+              <span onClick={() => addReaction(rant.id, "heartbreak")} className="reaction-btn">
                 💔 {rant.reactions?.heartbreak || 0}
               </span>
-              <span onClick={() => addReaction(rant.id, "cry")} style={{ cursor: "pointer" }}>
+              <span onClick={() => addReaction(rant.id, "cry")} className="reaction-btn">
                 😭 {rant.reactions?.cry || 0}
               </span>
             </div>
 
             {auth.currentUser?.uid === rant.uid && (
               <button
-                className="btn btn-sm btn-outline-primary mt-3"
+                className="btn btn-sm btn-outline-primary mt-3 edit-btn"
                 onClick={() => navigate(`/edit/${rant.id}`)}
               >
                 ✏️ Edit

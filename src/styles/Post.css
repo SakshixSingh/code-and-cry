@@ -1,0 +1,31 @@
+/* styles/Post.css */
+
+.post-form textarea,
+.post-form select,
+.post-form input[type="text"],
+.post-form .form-control,
+.post-form .form-select {
+  background-color: #111827 !important;
+  color: #f1f5f9 !important;
+  border: 1px solid #374151 !important;
+  border-radius: 6px;
+  padding: 10px;
+  transition: all 0.2s ease-in-out;
+}
+
+.post-form textarea::placeholder,
+.post-form input::placeholder {
+  color: #9ca3af !important;
+}
+
+.post-form textarea:focus,
+.post-form select:focus,
+.post-form input[type="text"]:focus {
+  outline: none;
+  border-color: #7dd3fc !important;
+  box-shadow: 0 0 0 2px rgba(125, 211, 252, 0.2) !important;
+}
+
+.post-form .form-check-input {
+  accent-color: #f472b6;
+}

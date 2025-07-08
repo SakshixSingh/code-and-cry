@@ -1,1 +1,45 @@
+/* === Global Text Color Fix === */
+body,
+h1, h2, h3, h4, h5, h6,
+p, span, label, button,
+input, textarea, select,
+option, legend {
+  color: #ffffff !important; /* bright white text */
+}
+
+/* === Placeholder Text === */
+input::placeholder,
+textarea::placeholder {
+  color: #cccccc;
+}
+
+/* === Bootstrap fix override (especially for form labels & buttons) === */
+.form-label,
+.form-control,
+.form-select,
+.btn {
+  color: #ffffff !important;
+  background-color: #0f172a; /* optional: make inputs match theme */
+  border-color: #334155;
+}
+
+/* === Optional: Hover Effects === */
+.btn:hover {
+  background-color: #1e293b !important;
+  border-color: #64748b;
+  color: #fff;
+}
+
+/* === Optional: Navbar fix === */
+.navbar,
+.navbar-nav .nav-link,
+.navbar-brand {
+  color: #ffffff !important;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #cbd5e1 !important;
+}
+
+/* Change highlight (selection) background and text color */
 
