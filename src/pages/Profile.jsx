@@ -1,120 +1,81 @@
 import React, { useEffect, useState } from "react";
-import { auth, db } from "../firebase/firebase";
-import { signOut } from "firebase/auth";
-import {
-  collection,
-  query,
-  where,
-  onSnapshot,
-  orderBy,
-  doc,
-  getDoc,
-} from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
-import { Card, Badge, Button } from "react-bootstrap";
+import { getAuth } from "firebase/auth";
+import { getFirestore, collection, query, where, getDocs, onSnapshot } from "firebase/firestore";
+import { Card, Button } from "react-bootstrap";
+import "../styles/Feed.css"; // Uses dark mode styling
 
-const Profile = () => {
-  const [myRants, setMyRants] = useState([]);
-  const [moodStats, setMoodStats] = useState({});
-  const [userData, setUserData] = useState(null);
-  const navigate = useNavigate();
-  const user = auth.currentUser;
+function Profile() {
+  const [rants, setRants] = useState([]);
+  const [user, setUser] = useState(null);
 
-  // 🔹 Fetch rants
+  const auth = getAuth();
+  const db = getFirestore();
+
   useEffect(() => {
-    if (!user) return;
+    const unsubscribeAuth = auth.onAuthStateChanged(async (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
 
-    const q = query(
-      collection(db, "rants"),
-      where("uid", "==", user.uid),
-      orderBy("createdAt", "desc")
-    );
+        const rantsRef = collection(db, "rants");
+        const q = query(rantsRef, where("userId", "==", currentUser.uid));
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const rants = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setMyRants(rants);
+        const unsubscribeRants = onSnapshot(q, (snapshot) => {
+          const rantList = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          setRants(rantList);
+        }, (error) => {
+          console.error("Error fetching rants:", error);
+        });
 
-      const moodCount = {};
-      rants.forEach((r) => {
-        if (r.mood) {
-          moodCount[r.mood] = (moodCount[r.mood] || 0) + 1;
-        }
-      });
-      setMoodStats(moodCount);
+        return () => {
+          unsubscribeRants();
+        };
+      }
     });
 
-    return () => unsubscribe();
-  }, [user]);
-
-  // 🔹 Fetch profile data
-  useEffect(() => {
-    const fetchUser = async () => {
-      if (!user) return;
-      const userRef = doc(db, "users", user.uid);
-      const userSnap = await getDoc(userRef);
-      if (userSnap.exists()) {
-        setUserData(userSnap.data());
-      }
+    return () => {
+      unsubscribeAuth();
     };
-    fetchUser();
-  }, [user]);
+  }, [auth, db]);
 
-  const handleLogout = async () => {
-    await signOut(auth);
-    navigate("/");
-  };
-
-  const getTopMood = () => {
-    const entries = Object.entries(moodStats);
-    if (entries.length === 0) return "😐";
-    return entries.reduce((a, b) => (a[1] > b[1] ? a : b))[0];
-  };
+  if (!user) {
+    return <div className="text-light">Loading...</div>;
+  }
 
   return (
-    <div className="container mt-5">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>👤 Your Profile</h2>
-        <Button variant="outline-danger" onClick={handleLogout}>
-          Logout
-        </Button>
+    <div className="container mt-4">
+      <h2 className="text-light mb-4">Welcome, {user.displayName || "Coder"} 👋</h2>
+      <div className="row">
+        {rants.length > 0 ? (
+          rants.map((rant) => (
+            <div className="col-md-6 mb-4" key={rant.id}>
+              <Card className="rant-card p-3 shadow">
+                <Card.Body>
+                  <Card.Title className="rant-title">{rant.title}</Card.Title>
+                  <Card.Text className="rant-text">{rant.text}</Card.Text>
+                  {rant.code && (
+                    <pre className="rant-code mt-2 p-2 rounded">
+                      <code>{rant.code}</code>
+                    </pre>
+                  )}
+                  <div className="mt-2">
+                    <span className="rant-tag badge me-2">{rant.mood}</span>
+                    <span className="text-muted" style={{ fontSize: "0.8rem" }}>
+                      Posted on {new Date(rant.timestamp?.toDate()).toLocaleString()}
+                    </span>
+                  </div>
+                </Card.Body>
+              </Card>
+            </div>
+          ))
+        ) : (
+          <p className="text-light">No rants yet. Go cry some code 😢.</p>
+        )}
       </div>
-
-      {/* Avatar + Bio */}
-      {userData && (
-        <div className="text-center mb-4">
-          <img
-            src={userData.avatar}
-            alt="avatar"
-            className="rounded-circle mb-2"
-            style={{ width: "100px", height: "100px", objectFit: "cover" }}
-          />
-          <h4>{userData.username} {userData.mood}</h4>
-          <p className="text-muted">{userData.bio || "No bio yet"}</p>
-        </div>
-      )}
-
-      <h5>Your Dev Mood: <span style={{ fontSize: "1.5rem" }}>{getTopMood()}</span></h5>
-      <p className="text-muted mb-4">You’ve posted {myRants.length} rant(s)</p>
-
-      {/* Rants */}
-      {myRants.map((rant) => (
-        <Card key={rant.id} className="mb-3">
-          <Card.Body>
-            <Card.Title>
-              {rant.isAnonymous ? "Anonymous 🥷" : `${rant.username} ${rant.mood}`}
-            </Card.Title>
-            <Card.Text>{rant.text}</Card.Text>
-            {rant.code && (
-              <pre className="bg-dark text-light p-2 rounded">
-                <code>{rant.code}</code>
-              </pre>
-            )}
-            <Badge bg="info">#{rant.tag}</Badge>
-          </Card.Body>
-        </Card>
-      ))}
     </div>
   );
-};
+}
 
 export default Profile;

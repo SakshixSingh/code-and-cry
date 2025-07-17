@@ -1,44 +1,49 @@
+/* Feed.css */
+
 /* Night-sky background */
 body, .feed-container {
   background: linear-gradient(135deg, #0a0f1a, #1b2735);
   min-height: 100vh;
-  color: #fff;
+  color: #f5f5f5;
   padding-bottom: 2rem;
 }
 
 /* Feed Title */
 .feed-title {
   font-family: 'Segoe UI', sans-serif;
-  color: #f5f5f5;
+  color: #ffffff;
   font-weight: bold;
-  text-shadow: 0 0 5px #fff;
+  text-shadow: 0 0 5px #ffffff;
 }
 
 /* Mood Filter Buttons */
 .mood-button {
-  border-radius: 8px;
+  min-width: 50px;
+  border-radius: 30px;
   transition: 0.3s ease;
+  color: #ffffff;
+  background-color: transparent;
+  border: 1px solid #ffffff;
 }
 
 .mood-button:hover {
-  background-color: #f5f5f5 !important;
+  background-color: #ffffff !important;
   color: #0a0f1a !important;
-  border-color: #f5f5f5 !important;
+  border-color: #ffffff !important;
 }
 
 /* Rant Cards */
 .rant-card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
+  background-color: #1f1f1f !important;  /* Dark solid */
+  color: #f8f9fa !important;
+  border: none;
+  border-radius: 12px;
   transition: transform 0.3s ease;
-  color: #f5f5f5;
 }
 
 .rant-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.08);
 }
 
 /* Avatar */
@@ -52,36 +57,47 @@ body, .feed-container {
 
 /* Text Styling */
 .rant-title {
-  font-weight: bold;
+  color: #ffffff !important;
+  font-weight: 600;
   font-size: 1.1rem;
 }
 
 .rant-text {
   margin-top: 0.5rem;
   line-height: 1.4;
+  color: #e0e0e0 !important;
 }
 
-/* Code block */
+/* Code block inside the card */
 .rant-code {
-  background-color: #1e1e1e;
-  border: 1px solid #333;
-  padding: 0.5rem;
+  background-color: #2c2c2c !important;
+  color: #f1f1f1 !important;
+  font-family: monospace;
   font-size: 0.9rem;
   overflow-x: auto;
+  padding: 0.5rem;
+  border-radius: 8px;
   margin-top: 0.5rem;
 }
 
-/* Tags */
+/* Tag badge */
 .rant-tag {
-  background-color: #6c757d !important;
+  background-color: #444 !important;
+  color: #ddd !important;
+  padding: 3px 10px;
   margin-top: 0.5rem;
   display: inline-block;
+  border-radius: 12px;
+  font-size: 0.8rem;
 }
 
 /* Reactions */
 .rant-reactions span {
   cursor: pointer;
-  transition: 0.2s ease;
+  font-size: 1.1rem;
+  user-select: none;
+  transition: transform 0.2s ease;
+  color: #ffffff;
 }
 
 .reaction-btn:hover {
@@ -94,6 +110,10 @@ body, .feed-container {
   background-color: transparent;
   color: #00bfff;
   border-color: #00bfff;
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 0.8rem;
+  transition: 0.2s ease;
 }
 
 .edit-btn:hover {
